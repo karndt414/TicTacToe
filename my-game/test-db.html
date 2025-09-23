@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Connection Test</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <button onclick="testConnection()">Test Database Connection</button>
+    <div id="results"></div>
+
+    <script>
+        // Replace with your actual Supabase credentials
+        const SUPABASE_URL = 'https://lzpfuzaywjxinfjopnlw.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6cGZ1emF5d2p4aW5mam9wbmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcxMTEyNzcsImV4cCI6MjA0MjY4NzI3N30.aBbdI2DdQDn8CcbBzPxLLzE7RdU_hLjhEKQcqowOJg8'
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        
+        async function testConnection() {
+            const results = document.getElementById('results')
+            results.innerHTML = '<p>Testing connection...</p>'
+            
+            try {
+                // Test 1: Check if players table exists
+                const { data: players, error: playersError } = await supabase
+                    .from('players')
+                    .select('count', { count: 'exact' })
+                    .limit(1)
+                
+                if (playersError) {
+                    results.innerHTML += `<p style="color: red;">❌ Players table error: ${playersError.message}</p>`
+                } else {
+                    results.innerHTML += `<p style="color: green;">✅ Players table exists (count: ${players.length})</p>`
+                }
+                
+                // Test 2: Try to call generate_room_code function
+                const { data: roomCode, error: rpcError } = await supabase.rpc('generate_room_code')
+                
+                if (rpcError) {
+                    results.innerHTML += `<p style="color: orange;">⚠️ RPC function error: ${rpcError.message}</p>`
+                    results.innerHTML += `<p>Will use fallback room code generation</p>`
+                } else {
+                    results.innerHTML += `<p style="color: green;">✅ Generated room code: ${roomCode}</p>`
+                }
+                
+                // Test 3: Try creating a test player
+                const sessionId = 'test_' + Date.now()
+                const { data: player, error: playerError } = await supabase
+                    .from('players')
+                    .insert({
+                        username: 'Test Player',
+                        session_id: sessionId
+                    })
+                    .select()
+                    .single()
+                
+                if (playerError) {
+                    results.innerHTML += `<p style="color: red;">❌ Create player error: ${playerError.message}</p>`
+                } else {
+                    results.innerHTML += `<p style="color: green;">✅ Created test player: ${player.username}</p>`
+                    
+                    // Clean up
+                    await supabase.from('players').delete().eq('id', player.id)
+                    results.innerHTML += `<p style="color: gray;">🧹 Cleaned up test player</p>`
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<p style="color: red;">❌ Unexpected error: ${error.message}</p>`
+            }
+        }
+    </script>
+</body>
+</html>
