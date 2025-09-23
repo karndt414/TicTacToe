@@ -513,7 +513,7 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
 }) => {
   const redPlayers = players.filter(p => p.team === 'red')
   const purplePlayers = players.filter(p => p.team === 'purple')
-  const canStart = players.length >= 2 && players.every(p => p.is_ready)
+  const canStart = players.length >= 1 && players.every(p => p.is_ready)
 
   return (
     <div className="min-h-screen p-4">
