@@ -271,8 +271,8 @@ const App = () => {
       onSquareClick={async (square: number) => {
             try {
               setLoading(true)
-        const miniGames = ['rps', 'quick_tap'] as const
-        const mini = miniGames[Math.floor(Math.random() * miniGames.length)]
+        const miniGames = ['rps', 'quick_tap', 'math_quiz'] as const
+              const mini = miniGames[Math.floor(Math.random() * miniGames.length)]
               const match = await createMatch(appData.currentGame!.id, square, mini)
               if (!match) throw new Error('Could not create match')
               setAppData(prev => ({ ...prev, currentMatch: match }))
@@ -513,7 +513,14 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
 }) => {
   const redPlayers = players.filter(p => p.team === 'red')
   const purplePlayers = players.filter(p => p.team === 'purple')
+<<<<<<< HEAD
   const canStart = players.length >= 1 && players.every(p => p.is_ready)
+=======
+  const canStart = redPlayers.length === 3 && purplePlayers.length === 3 && 
+                   [...redPlayers, ...purplePlayers].every(p => p.is_ready)
+  const canForceStart = redPlayers.length >= 1 && purplePlayers.length >= 1
+  const isHost = currentPlayer.id === room.host_player_id
+>>>>>>> a4cd3fd (Got working room login and creation)
 
   return (
     <div className="min-h-screen p-4">
@@ -524,13 +531,20 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
             <div>
               <h1 className="text-3xl font-bold text-gray-800">🎯 {room.name}</h1>
               <p className="text-gray-600">Room Code: <span className="font-mono text-lg font-bold">{room.code}</span></p>
+              {isHost && <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full mt-1">👑 Host</span>}
             </div>
-            <button 
-              onClick={onLeaveRoom}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-            >
-              Leave Room
-            </button>
+            <div className="text-right">
+              <button 
+                onClick={onLeaveRoom}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2"
+              >
+                Leave Room
+              </button>
+              <div className="text-sm text-gray-500">
+                <p>Players: {players.length}/6</p>
+                <p>Ready: {players.filter(p => p.is_ready).length}/{players.length}</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -544,15 +558,18 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
                 <div key={player.id} className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-3">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">{player.username}</span>
-                    <span>{player.is_ready ? '✅' : '⏳'}</span>
+                    <div className="flex items-center space-x-2">
+                      <span>{player.is_ready ? '✅' : '⏳'}</span>
+                      {player.id === room.host_player_id && <span className="text-xs">👑</span>}
+                    </div>
                   </div>
                 </div>
               ))}
-              {redPlayers.length < 3 && (
-                <div className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200">
-                  Waiting for players...
+              {Array.from({ length: Math.max(0, 3 - redPlayers.length) }, (_, i) => (
+                <div key={`empty-red-${i}`} className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200 border-2 border-dashed border-white border-opacity-30">
+                  Empty slot {redPlayers.length + i + 1}/3
                 </div>
-              )}
+              ))}
             </div>
             {!currentPlayer.team && redPlayers.length < 3 && (
               <button
@@ -601,9 +618,34 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
                 </button>
               )}
 
+              {!canStart && canForceStart && isHost && (
+                <div className="space-y-2">
+                  <div className="text-center text-sm text-yellow-600 bg-yellow-50 rounded-lg p-2">
+                    <p>⚠️ Ideal: 3 players per team, all ready</p>
+                    <p>Current: {redPlayers.length} red, {purplePlayers.length} purple</p>
+                  </div>
+                  <button
+                    onClick={onStartGame}
+                    className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-3 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                  >
+                    ⚡ FORCE START (Host Only)
+                  </button>
+                </div>
+              )}
+
+              {!canForceStart && (
+                <div className="text-center text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+                  <p>⏳ Need at least 1 player on each team to start</p>
+                  <p>Red: {redPlayers.length} | Purple: {purplePlayers.length}</p>
+                </div>
+              )}
+
               <div className="text-center text-sm text-gray-500">
-                <p>Players: {players.length}/6</p>
-                <p>Ready: {players.filter(p => p.is_ready).length}/{players.length}</p>
+                <p>💡 <strong>Optimal:</strong> 3v3 teams, all ready</p>
+                <p>📊 <strong>Current:</strong> {redPlayers.length} red vs {purplePlayers.length} purple</p>
+                {isHost && !canStart && canForceStart && (
+                  <p className="text-orange-600 font-medium mt-1">🔑 You can force start as host</p>
+                )}
               </div>
             </div>
           </div>
@@ -616,15 +658,18 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
                 <div key={player.id} className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-3">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">{player.username}</span>
-                    <span>{player.is_ready ? '✅' : '⏳'}</span>
+                    <div className="flex items-center space-x-2">
+                      <span>{player.is_ready ? '✅' : '⏳'}</span>
+                      {player.id === room.host_player_id && <span className="text-xs">👑</span>}
+                    </div>
                   </div>
                 </div>
               ))}
-              {purplePlayers.length < 3 && (
-                <div className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200">
-                  Waiting for players...
+              {Array.from({ length: Math.max(0, 3 - purplePlayers.length) }, (_, i) => (
+                <div key={`empty-purple-${i}`} className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200 border-2 border-dashed border-white border-opacity-30">
+                  Empty slot {purplePlayers.length + i + 1}/3
                 </div>
-              )}
+              ))}
             </div>
             {!currentPlayer.team && purplePlayers.length < 3 && (
               <button
@@ -741,6 +786,9 @@ const MiniGameScreen = ({ match, players, onWin }: {
   }
   if (match.mini_game === 'quick_tap') {
     return <QuickTapGame match={match} redPlayer={redPlayer} purplePlayer={purplePlayer} onWin={onWin} />
+  }
+  if (match.mini_game === 'math_quiz') {
+    return <MathQuizGame match={match} redPlayer={redPlayer} purplePlayer={purplePlayer} onWin={onWin} />
   }
   
   // Placeholder for other mini-games
@@ -931,6 +979,173 @@ const RockPaperScissorsGame = ({ match, redPlayer, purplePlayer, onWin }: {
 }
 
 export default App
+
+// Math Quiz Mini-Game Component
+const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
+  match: Match
+  redPlayer?: Player
+  purplePlayer?: Player
+  onWin: (winner: 'red' | 'purple') => void
+}) => {
+  const [question, setQuestion] = useState<{ text: string; answer: number; options: number[] } | null>(null)
+  const [redAnswer, setRedAnswer] = useState<number | null>(null)
+  const [purpleAnswer, setPurpleAnswer] = useState<number | null>(null)
+  const [timeLeft, setTimeLeft] = useState(10)
+  const [showResult, setShowResult] = useState(false)
+
+  // Generate random math question
+  useEffect(() => {
+    const operations = ['+', '-', '×'] as const
+    const op = operations[Math.floor(Math.random() * operations.length)]
+    let a = Math.floor(Math.random() * 20) + 1
+    let b = Math.floor(Math.random() * 20) + 1
+    let answer: number
+    let text: string
+
+    switch (op) {
+      case '+':
+        answer = a + b
+        text = `${a} + ${b}`
+        break
+      case '-':
+        if (a < b) [a, b] = [b, a] // Ensure positive result
+        answer = a - b
+        text = `${a} - ${b}`
+        break
+      case '×':
+        a = Math.floor(Math.random() * 12) + 1
+        b = Math.floor(Math.random() * 12) + 1
+        answer = a * b
+        text = `${a} × ${b}`
+        break
+    }
+
+    // Generate wrong options
+    const options = [answer]
+    while (options.length < 4) {
+      const wrong = answer + Math.floor(Math.random() * 10) - 5
+      if (wrong > 0 && !options.includes(wrong)) {
+        options.push(wrong)
+      }
+    }
+    
+    // Shuffle options
+    for (let i = options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [options[i], options[j]] = [options[j], options[i]]
+    }
+
+    setQuestion({ text, answer, options })
+  }, [])
+
+  // Countdown timer
+  useEffect(() => {
+    if (timeLeft > 0 && !showResult) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
+      return () => clearTimeout(timer)
+    } else if (timeLeft === 0 && !showResult) {
+      evaluateAnswers()
+    }
+  }, [timeLeft, showResult])
+
+  const evaluateAnswers = () => {
+    if (!question) return
+    
+    const redCorrect = redAnswer === question.answer
+    const purpleCorrect = purpleAnswer === question.answer
+    
+    if (redCorrect && !purpleCorrect) {
+      onWin('red')
+    } else if (purpleCorrect && !redCorrect) {
+      onWin('purple')
+    } else if (redCorrect && purpleCorrect) {
+      // Both correct - faster wins (simulate by random for now)
+      onWin(Math.random() < 0.5 ? 'red' : 'purple')
+    } else {
+      // Both wrong - random
+      onWin(Math.random() < 0.5 ? 'red' : 'purple')
+    }
+    setShowResult(true)
+  }
+
+  if (!question) return <div>Loading...</div>
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">🧮 Math Quiz</h2>
+          <p className="text-gray-600">First to answer correctly wins!</p>
+          <p className="text-sm mt-1">Square: {match.square + 1}</p>
+          <div className="text-2xl font-bold text-red-500 mt-2">⏰ {timeLeft}s</div>
+        </div>
+
+        <div className="text-center mb-8">
+          <div className="text-4xl font-bold text-gray-800 mb-4">{question.text} = ?</div>
+        </div>
+
+        {!showResult ? (
+          <div className="grid grid-cols-2 gap-6">
+            {/* Red Player */}
+            <div className="bg-red-50 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-red-600 mb-4 text-center">🔴 {redPlayer?.username}</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {question.options.map(option => (
+                  <button
+                    key={option}
+                    onClick={() => setRedAnswer(option)}
+                    className={`p-3 rounded-lg font-bold transition-all ${
+                      redAnswer === option 
+                        ? 'bg-red-600 text-white' 
+                        : 'bg-white hover:bg-red-100 border-2 border-red-200'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Purple Player */}
+            <div className="bg-purple-50 rounded-xl p-6">
+              <h3 className="text-xl font-bold text-purple-600 mb-4 text-center">🟣 {purplePlayer?.username}</h3>
+              <div className="grid grid-cols-2 gap-2">
+                {question.options.map(option => (
+                  <button
+                    key={option}
+                    onClick={() => setPurpleAnswer(option)}
+                    className={`p-3 rounded-lg font-bold transition-all ${
+                      purpleAnswer === option 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-white hover:bg-purple-100 border-2 border-purple-200'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center">
+            <div className="bg-gray-50 rounded-xl p-6">
+              <div className="text-3xl font-bold mb-4">Answer: {question.answer}</div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className={`p-3 rounded-lg ${redAnswer === question.answer ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                  {redPlayer?.username}: {redAnswer ?? 'No answer'} {redAnswer === question.answer ? '✅' : '❌'}
+                </div>
+                <div className={`p-3 rounded-lg ${purpleAnswer === question.answer ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                  {purplePlayer?.username}: {purpleAnswer ?? 'No answer'} {purpleAnswer === question.answer ? '✅' : '❌'}
+                </div>
+              </div>
+              <p className="text-gray-600">Returning to game...</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
 
 // Quick Tap Mini-Game Component
 const QuickTapGame = ({ match, redPlayer, purplePlayer, onWin }: {

@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS matches (
     square INTEGER NOT NULL CHECK (square >= 0 AND square <= 24),
     red_player UUID REFERENCES players(id),
     purple_player UUID REFERENCES players(id),
-    mini_game TEXT NOT NULL CHECK (mini_game IN ('rps', 'tic_tac_toe', 'pong', 'quick_tap')),
+    mini_game TEXT NOT NULL CHECK (mini_game IN ('rps', 'tic_tac_toe', 'pong', 'quick_tap', 'math_quiz')),
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'completed')),
     winner_team TEXT CHECK (winner_team IN ('red', 'purple')),
     game_state JSONB DEFAULT '{}'::jsonb,

@@ -67,7 +67,7 @@ export interface Match {
   square: number
   red_player: string
   purple_player: string
-  mini_game: 'rps' | 'tic_tac_toe' | 'pong' | 'quick_tap'
+  mini_game: 'rps' | 'tic_tac_toe' | 'pong' | 'quick_tap' | 'math_quiz'
   winner_team: 'red' | 'purple' | null
   status?: 'pending' | 'active' | 'completed'
   game_state: any
@@ -470,7 +470,7 @@ const getRoomPlayers = async (roomId: string): Promise<Player[]> => {
 
 // Game logic helpers
 export const challengeSquare = async (gameId: string, square: number, redPlayer: string, purplePlayer: string): Promise<Match | null> => {
-  const miniGames = ['rps', 'quick_tap'] as const
+  const miniGames = ['rps', 'quick_tap', 'math_quiz'] as const
   const randomGame = miniGames[Math.floor(Math.random() * miniGames.length)]
 
   const { data, error } = await supabase
@@ -584,7 +584,7 @@ export const subscribeToGame = (gameId: string, callback: (game: Game) => void) 
   return channel
 }
 
-// Create a match choosing random players from each team in the room
+// Create a match choosing players strategically from each team
 export const createMatch = async (gameId: string, square: number, miniGame: string): Promise<Match | null> => {
   // Lookup game -> room
   const { data: game } = await supabase
@@ -598,8 +598,32 @@ export const createMatch = async (gameId: string, square: number, miniGame: stri
   const red = players.filter(p => p.team === 'red')
   const purple = players.filter(p => p.team === 'purple')
   if (!red.length || !purple.length) return null
-  const redPlayer = red[Math.floor(Math.random() * red.length)]
-  const purplePlayer = purple[Math.floor(Math.random() * purple.length)]
+
+  // Smart player selection: rotate through players to ensure everyone gets chances
+  // Get existing matches for this game to see who's played recently
+  const { data: existingMatches } = await supabase
+    .from('matches')
+    .select('red_player, purple_player')
+    .eq('game_id', gameId)
+    .order('created_at', { ascending: false })
+
+  const recentRedPlayers = new Set(existingMatches?.slice(0, 3).map(m => m.red_player) || [])
+  const recentPurplePlayers = new Set(existingMatches?.slice(0, 3).map(m => m.purple_player) || [])
+
+  // Prefer players who haven't played recently
+  let redPlayer = red.find(p => !recentRedPlayers.has(p.id)) || red[0]
+  let purplePlayer = purple.find(p => !recentPurplePlayers.has(p.id)) || purple[0]
+
+  // If we still have ties, use random selection
+  if (red.filter(p => !recentRedPlayers.has(p.id)).length > 1) {
+    const availableRed = red.filter(p => !recentRedPlayers.has(p.id))
+    redPlayer = availableRed[Math.floor(Math.random() * availableRed.length)]
+  }
+  
+  if (purple.filter(p => !recentPurplePlayers.has(p.id)).length > 1) {
+    const availablePurple = purple.filter(p => !recentPurplePlayers.has(p.id))
+    purplePlayer = availablePurple[Math.floor(Math.random() * availablePurple.length)]
+  }
 
   const { data, error } = await supabase
     .from('matches')
