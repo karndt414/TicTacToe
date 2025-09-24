@@ -270,6 +270,12 @@ const App = () => {
           players={appData.roomPlayers}
           onSquareClick={async (square: number) => {
             try {
+              // Only allow current team to start matches
+              if (appData.currentPlayer?.team !== appData.currentGame?.current_turn) {
+                setError('Not your turn! Wait for the other team to finish.')
+                return
+              }
+              
               setLoading(true)
               const miniGames = ['rps', 'quick_tap', 'math_quiz'] as const
               const mini = miniGames[Math.floor(Math.random() * miniGames.length)]
@@ -286,11 +292,15 @@ const App = () => {
                   setTimeout(() => {
                     setAppState('game')
                     setAppData(prev => ({ ...prev, currentMatch: null }))
+                    // Clean up match subscription when returning to game
+                    ;(window as any).__matchChannel?.unsubscribe?.()
+                    ;(window as any).__matchChannel = null
                   }, 2000)
                 }
               })
-                ; (window as any).__matchChannel?.unsubscribe?.()
-                ; (window as any).__matchChannel = matchChannel
+              // Clean up previous match subscription before creating new one
+              ;(window as any).__matchChannel?.unsubscribe?.()
+              ;(window as any).__matchChannel = matchChannel
             } catch (err: any) {
               setError(err.message || 'Failed to create match')
             } finally {
@@ -713,12 +723,17 @@ const GameScreen = ({ game, players, onSquareClick, onLeaveGame }: {
               </h2>
             </div>
           ) : (
-            <div className="mt-4 text-center">
-              <p className="text-lg">
-                Current Turn: <span className={`font-bold ${game.current_turn === 'red' ? 'text-red-500' : 'text-purple-500'}`}>
-                  {game.current_turn.toUpperCase()} TEAM
-                </span>
-              </p>
+            <div className="mt-4">
+              <div className={`p-4 rounded-xl ${game.current_turn === 'red' ? 'bg-red-100 text-red-800' : 'bg-purple-100 text-purple-800'}`}>
+                <p className="text-lg text-center">
+                  <span className="font-bold text-2xl">
+                    🎯 {game.current_turn.toUpperCase()} TEAM'S TURN
+                  </span>
+                </p>
+                <p className="text-sm text-center mt-2 opacity-75">
+                  Click any empty square to start a mini-game challenge!
+                </p>
+              </div>
             </div>
           )}
         </div>
