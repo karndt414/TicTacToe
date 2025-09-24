@@ -24,15 +24,15 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: './myapp/package-lock.json'
+          cache-dependency-path: './my-game/package-lock.json'
       
       - name: Install dependencies
         run: npm ci
-        working-directory: ./myapp
+        working-directory: ./my-game
       
       - name: Build
         run: npm run build
-        working-directory: ./myapp
+        working-directory: ./my-game
         env:
           VITE_SUPABASE_URL: https://magmikrrbiyqtabrhyxy.supabase.co
           VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1hZ21pa3JyYml5cXRhYnJoeXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NDUwMzIsImV4cCI6MjA3NDIyMTAzMn0.YmM97XwpCe0eO2pzFuVNJbAETDLiqRvRnzXjJDoWbGo
@@ -43,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './myapp/dist'
+          path: './my-game/dist'
       
       - name: Deploy to GitHub Pages
         id: deployment
