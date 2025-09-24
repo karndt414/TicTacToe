@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { 
-  createPlayer, 
-  createRoom, 
-  joinRoom, 
-  subscribeToRoom, 
+import {
+  createPlayer,
+  createRoom,
+  joinRoom,
+  subscribeToRoom,
   getCurrentPlayer,
   joinTeam,
   toggleReady,
@@ -118,7 +118,7 @@ const App = () => {
 
       {/* Home Screen */}
       {appState === 'home' && (
-        <HomeScreen 
+        <HomeScreen
           onCreateRoom={() => setAppState('create-room')}
           onJoinRoom={() => setAppState('join-room')}
         />
@@ -126,16 +126,16 @@ const App = () => {
 
       {/* Create Room Screen */}
       {appState === 'create-room' && (
-        <CreateRoomScreen 
+        <CreateRoomScreen
           onBack={() => setAppState('home')}
-      onRoomCreated={async (username: string, roomName: string) => {
+          onRoomCreated={async (username: string, roomName: string) => {
             try {
               setLoading(true)
-        const player = await createPlayer(username)
-        if (!player) throw new Error('Could not create player')
+              const player = await createPlayer(username)
+              if (!player) throw new Error('Could not create player')
               const room = await createRoom(roomName, player.id)
               if (!room) throw new Error('Could not create room')
-              
+
               setAppData(prev => ({
                 ...prev,
                 currentPlayer: player,
@@ -143,14 +143,14 @@ const App = () => {
                 roomPlayers: [player]
               }))
               setAppState('lobby')
-              
+
               // Subscribe to room updates
               const roomChannel = subscribeToRoom(room.id, (players) => {
                 setAppData(prev => ({ ...prev, roomPlayers: players }))
               })
-        // store channel on window for cleanup if needed
-        ;(window as any).__roomChannel?.unsubscribe?.()
-        ;(window as any).__roomChannel = roomChannel
+                // store channel on window for cleanup if needed
+                ; (window as any).__roomChannel?.unsubscribe?.()
+                ; (window as any).__roomChannel = roomChannel
             } catch (err: any) {
               setError(err.message || 'Failed to create room')
             } finally {
@@ -162,17 +162,17 @@ const App = () => {
 
       {/* Join Room Screen */}
       {appState === 'join-room' && (
-        <JoinRoomScreen 
+        <JoinRoomScreen
           onBack={() => setAppState('home')}
-      onRoomJoined={async (username: string, roomCode: string) => {
+          onRoomJoined={async (username: string, roomCode: string) => {
             try {
               setLoading(true)
-        const player = await createPlayer(username)
-        if (!player) throw new Error('Could not create player')
+              const player = await createPlayer(username)
+              if (!player) throw new Error('Could not create player')
               const res = await joinRoom(roomCode, player.id)
               if (!res) throw new Error('Room join failed')
               const { room, players } = res
-              
+
               setAppData(prev => ({
                 ...prev,
                 currentPlayer: player,
@@ -180,13 +180,13 @@ const App = () => {
                 roomPlayers: players
               }))
               setAppState('lobby')
-              
+
               // Subscribe to room updates
               const roomChannel = subscribeToRoom(room.id, (updatedPlayers) => {
                 setAppData(prev => ({ ...prev, roomPlayers: updatedPlayers }))
               })
-        ;(window as any).__roomChannel?.unsubscribe?.()
-        ;(window as any).__roomChannel = roomChannel
+                ; (window as any).__roomChannel?.unsubscribe?.()
+                ; (window as any).__roomChannel = roomChannel
             } catch (err: any) {
               setError(err.message || 'Failed to join room')
             } finally {
@@ -198,7 +198,7 @@ const App = () => {
 
       {/* Lobby Screen */}
       {appState === 'lobby' && appData.currentRoom && appData.currentPlayer && (
-        <LobbyScreen 
+        <LobbyScreen
           room={appData.currentRoom}
           players={appData.roomPlayers}
           currentPlayer={appData.currentPlayer}
@@ -226,20 +226,20 @@ const App = () => {
               setLoading(false)
             }
           }}
-      onStartGame={async () => {
+          onStartGame={async () => {
             try {
               setLoading(true)
               const game = await startGame(appData.currentRoom!.id)
               if (!game) throw new Error('Could not start game')
               setAppData(prev => ({ ...prev, currentGame: game }))
               setAppState('game')
-              
+
               // Subscribe to game updates
               const gameChannel = subscribeToGame(game.id, (updatedGame) => {
                 setAppData(prev => ({ ...prev, currentGame: updatedGame }))
               })
-        ;(window as any).__gameChannel?.unsubscribe?.()
-        ;(window as any).__gameChannel = gameChannel
+                ; (window as any).__gameChannel?.unsubscribe?.()
+                ; (window as any).__gameChannel = gameChannel
             } catch (err: any) {
               setError(err.message || 'Failed to start game')
             } finally {
@@ -265,19 +265,19 @@ const App = () => {
 
       {/* Game Screen */}
       {appState === 'game' && appData.currentGame && (
-        <GameScreen 
+        <GameScreen
           game={appData.currentGame}
           players={appData.roomPlayers}
-      onSquareClick={async (square: number) => {
+          onSquareClick={async (square: number) => {
             try {
               setLoading(true)
-        const miniGames = ['rps', 'quick_tap', 'math_quiz'] as const
+              const miniGames = ['rps', 'quick_tap', 'math_quiz'] as const
               const mini = miniGames[Math.floor(Math.random() * miniGames.length)]
               const match = await createMatch(appData.currentGame!.id, square, mini)
               if (!match) throw new Error('Could not create match')
               setAppData(prev => ({ ...prev, currentMatch: match }))
               setAppState('mini-game')
-              
+
               // Subscribe to match updates
               const matchChannel = subscribeToMatch(match.id, (updatedMatch) => {
                 setAppData(prev => ({ ...prev, currentMatch: updatedMatch }))
@@ -289,8 +289,8 @@ const App = () => {
                   }, 2000)
                 }
               })
-        ;(window as any).__matchChannel?.unsubscribe?.()
-        ;(window as any).__matchChannel = matchChannel
+                ; (window as any).__matchChannel?.unsubscribe?.()
+                ; (window as any).__matchChannel = matchChannel
             } catch (err: any) {
               setError(err.message || 'Failed to create match')
             } finally {
@@ -303,7 +303,7 @@ const App = () => {
 
       {/* Mini Game Screen */}
       {appState === 'mini-game' && appData.currentMatch && (
-        <MiniGameScreen 
+        <MiniGameScreen
           match={appData.currentMatch}
           players={appData.roomPlayers}
           onWin={async (winner: 'red' | 'purple') => {
@@ -334,7 +334,7 @@ const HomeScreen = ({ onCreateRoom, onJoinRoom }: {
         <div className="text-6xl mb-6">🎯</div>
         <h1 className="text-4xl font-bold text-gray-800 mb-2">Team Bingo</h1>
         <p className="text-gray-600 mb-8">The ultimate team competition game!</p>
-        
+
         <div className="space-y-4">
           <button
             onClick={onCreateRoom}
@@ -342,7 +342,7 @@ const HomeScreen = ({ onCreateRoom, onJoinRoom }: {
           >
             🏗️ Create Room
           </button>
-          
+
           <button
             onClick={onJoinRoom}
             className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
@@ -350,7 +350,7 @@ const HomeScreen = ({ onCreateRoom, onJoinRoom }: {
             🚪 Join Room
           </button>
         </div>
-        
+
         <div className="mt-8 text-sm text-gray-500">
           <p>✨ Real-time multiplayer</p>
           <p>🎮 Mini-games included</p>
@@ -385,7 +385,7 @@ const CreateRoomScreen = ({ onBack, onRoomCreated }: {
         >
           ← Back
         </button>
-        
+
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🏗️</div>
           <h2 className="text-3xl font-bold text-gray-800">Create Room</h2>
@@ -455,7 +455,7 @@ const JoinRoomScreen = ({ onBack, onRoomJoined }: {
         >
           ← Back
         </button>
-        
+
         <div className="text-center mb-8">
           <div className="text-5xl mb-4">🚪</div>
           <h2 className="text-3xl font-bold text-gray-800">Join Room</h2>
@@ -513,14 +513,10 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
 }) => {
   const redPlayers = players.filter(p => p.team === 'red')
   const purplePlayers = players.filter(p => p.team === 'purple')
-<<<<<<< HEAD
-  const canStart = players.length >= 1 && players.every(p => p.is_ready)
-=======
-  const canStart = redPlayers.length === 3 && purplePlayers.length === 3 && 
+  const canStart = redPlayers.length === 3 && purplePlayers.length === 3 &&
                    [...redPlayers, ...purplePlayers].every(p => p.is_ready)
   const canForceStart = redPlayers.length >= 1 && purplePlayers.length >= 1
   const isHost = currentPlayer.id === room.host_player_id
->>>>>>> a4cd3fd (Got working room login and creation)
 
   return (
     <div className="min-h-screen p-4">
@@ -534,7 +530,7 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
               {isHost && <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full mt-1">👑 Host</span>}
             </div>
             <div className="text-right">
-              <button 
+              <button
                 onClick={onLeaveRoom}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2"
               >
@@ -584,7 +580,7 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
           {/* Center Controls */}
           <div className="bg-white rounded-2xl shadow-xl p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Game Control</h2>
-            
+
             <div className="space-y-4">
               <div className="bg-gray-50 rounded-lg p-4">
                 <p className="text-sm text-gray-600 mb-1">You are:</p>
@@ -599,11 +595,10 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
               {currentPlayer.team && (
                 <button
                   onClick={onToggleReady}
-                  className={`w-full py-3 rounded-lg font-bold transition-colors ${
-                    currentPlayer.is_ready 
-                      ? 'bg-green-500 hover:bg-green-600 text-white' 
+                  className={`w-full py-3 rounded-lg font-bold transition-colors ${currentPlayer.is_ready
+                      ? 'bg-green-500 hover:bg-green-600 text-white'
                       : 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                  }`}
+                    }`}
                 >
                   {currentPlayer.is_ready ? '✅ Ready!' : '⏳ Mark Ready'}
                 </button>
@@ -703,14 +698,14 @@ const GameScreen = ({ game, players, onSquareClick, onLeaveGame }: {
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-800">🎯 Team Bingo Game</h1>
-            <button 
+            <button
               onClick={onLeaveGame}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
             >
               Leave Game
             </button>
           </div>
-          
+
           {game.winner_team ? (
             <div className={`mt-4 p-4 rounded-xl ${game.winner_team === 'red' ? 'bg-red-100 text-red-800' : 'bg-purple-100 text-purple-800'}`}>
               <h2 className="text-2xl font-bold text-center">
@@ -735,11 +730,10 @@ const GameScreen = ({ game, players, onSquareClick, onLeaveGame }: {
               <button
                 key={i}
                 onClick={() => squareState === 'empty' && !game.winner_team && onSquareClick(i)}
-                className={`aspect-square border-2 text-lg font-bold rounded-lg transition-all duration-200 ${
-                  squareState === 'red' ? 'bg-red-500 text-white border-red-600 shadow-lg' :
-                  squareState === 'purple' ? 'bg-purple-500 text-white border-purple-600 shadow-lg' :
-                  'bg-gray-50 hover:bg-gray-100 border-gray-300 hover:border-gray-400 hover:shadow-md'
-                } ${squareState === 'empty' && !game.winner_team ? 'cursor-pointer transform hover:scale-105' : 'cursor-not-allowed'}`}
+                className={`aspect-square border-2 text-lg font-bold rounded-lg transition-all duration-200 ${squareState === 'red' ? 'bg-red-500 text-white border-red-600 shadow-lg' :
+                    squareState === 'purple' ? 'bg-purple-500 text-white border-purple-600 shadow-lg' :
+                      'bg-gray-50 hover:bg-gray-100 border-gray-300 hover:border-gray-400 hover:shadow-md'
+                  } ${squareState === 'empty' && !game.winner_team ? 'cursor-pointer transform hover:scale-105' : 'cursor-not-allowed'}`}
                 disabled={squareState !== 'empty' || !!game.winner_team}
               >
                 {squareState === 'empty' ? i + 1 : squareState === 'red' ? '🔴' : '🟣'}
@@ -790,7 +784,7 @@ const MiniGameScreen = ({ match, players, onWin }: {
   if (match.mini_game === 'math_quiz') {
     return <MathQuizGame match={match} redPlayer={redPlayer} purplePlayer={purplePlayer} onWin={onWin} />
   }
-  
+
   // Placeholder for other mini-games
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -837,21 +831,21 @@ const RockPaperScissorsGame = ({ match, redPlayer, purplePlayer, onWin }: {
     { value: 'paper', emoji: '📄', label: 'Paper' },
     { value: 'scissors', emoji: '✂️', label: 'Scissors' }
   ]
-  
+
   const playGame = () => {
     if (!redChoice || !purpleChoice) return
-    
+
     if (redChoice === purpleChoice) {
       setResult('tie')
       setShowResult(true)
       return
     }
-    
-    const redWins = 
+
+    const redWins =
       (redChoice === 'rock' && purpleChoice === 'scissors') ||
       (redChoice === 'paper' && purpleChoice === 'rock') ||
       (redChoice === 'scissors' && purpleChoice === 'paper')
-    
+
     const winner = redWins ? 'red' : 'purple'
     setResult(winner)
     setShowResult(true)
@@ -882,7 +876,7 @@ const RockPaperScissorsGame = ({ match, redPlayer, purplePlayer, onWin }: {
             <span className="text-purple-600 font-bold">{purplePlayer?.username || 'Purple Player'}</span>
           </p>
         </div>
-        
+
         {!showResult ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Red Player */}
@@ -951,7 +945,7 @@ const RockPaperScissorsGame = ({ match, redPlayer, purplePlayer, onWin }: {
                   <div className="font-bold text-purple-600">{purplePlayer?.username}</div>
                 </div>
               </div>
-              
+
               {result === 'tie' ? (
                 <div>
                   <p className="text-2xl font-bold text-gray-600 mb-4">🤝 It's a tie!</p>
@@ -1028,7 +1022,7 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
         options.push(wrong)
       }
     }
-    
+
     // Shuffle options
     for (let i = options.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -1050,10 +1044,10 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
 
   const evaluateAnswers = () => {
     if (!question) return
-    
+
     const redCorrect = redAnswer === question.answer
     const purpleCorrect = purpleAnswer === question.answer
-    
+
     if (redCorrect && !purpleCorrect) {
       onWin('red')
     } else if (purpleCorrect && !redCorrect) {
@@ -1094,11 +1088,10 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
                   <button
                     key={option}
                     onClick={() => setRedAnswer(option)}
-                    className={`p-3 rounded-lg font-bold transition-all ${
-                      redAnswer === option 
-                        ? 'bg-red-600 text-white' 
+                    className={`p-3 rounded-lg font-bold transition-all ${redAnswer === option
+                        ? 'bg-red-600 text-white'
                         : 'bg-white hover:bg-red-100 border-2 border-red-200'
-                    }`}
+                      }`}
                   >
                     {option}
                   </button>
@@ -1114,11 +1107,10 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
                   <button
                     key={option}
                     onClick={() => setPurpleAnswer(option)}
-                    className={`p-3 rounded-lg font-bold transition-all ${
-                      purpleAnswer === option 
-                        ? 'bg-purple-600 text-white' 
+                    className={`p-3 rounded-lg font-bold transition-all ${purpleAnswer === option
+                        ? 'bg-purple-600 text-white'
                         : 'bg-white hover:bg-purple-100 border-2 border-purple-200'
-                    }`}
+                      }`}
                   >
                     {option}
                   </button>
