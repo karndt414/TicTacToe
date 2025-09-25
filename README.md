@@ -20,6 +20,6 @@ This project demonstrates a clean, interactive grid-based game board with a mode
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/5x5-multiplayer-game.git
+git clone https://github.com/yourusername/5x5-multiplayer-game
 cd 5x5-multiplayer-game
 
