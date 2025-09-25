@@ -229,6 +229,22 @@ const App = () => {
           onStartGame={async () => {
             try {
               setLoading(true)
+              // Mark all players as ready if force starting
+              const redPlayers = appData.roomPlayers.filter(p => p.team === 'red')
+              const purplePlayers = appData.roomPlayers.filter(p => p.team === 'purple')
+              const canStart = redPlayers.length === 3 && purplePlayers.length === 3 &&
+                [...redPlayers, ...purplePlayers].every(p => p.is_ready)
+              const canForceStart = redPlayers.length >= 1 && purplePlayers.length >= 1
+              const isHost = appData.currentPlayer?.id === appData.currentRoom?.host_player_id
+
+              if (!canStart && canForceStart && isHost) {
+                await Promise.all(
+                  appData.roomPlayers
+                    .filter(p => !p.is_ready)
+                    .map(p => toggleReady(p.id))
+                )
+              }
+
               const game = await startGame(appData.currentRoom!.id)
               if (!game) throw new Error('Could not start game')
               setAppData(prev => ({ ...prev, currentGame: game }))
