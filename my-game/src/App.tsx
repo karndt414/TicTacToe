@@ -238,12 +238,19 @@ const App = () => {
               const isHost = appData.currentPlayer?.id === appData.currentRoom?.host_player_id
 
               if (!canStart && canForceStart && isHost) {
+                // Mark all players as ready
                 await Promise.all(
                   appData.roomPlayers
                     .filter(p => !p.is_ready)
                     .map(p => toggleReady(p.id))
                 )
+                // Wait for the subscription to update the local state
+                await new Promise(resolve => setTimeout(resolve, 500))
               }
+
+              // Optionally, fetch the latest players here if your backend supports it
+              // const updatedPlayers = await fetchRoomPlayers(appData.currentRoom!.id)
+              // setAppData(prev => ({ ...prev, roomPlayers: updatedPlayers }))
 
               const game = await startGame(appData.currentRoom!.id)
               if (!game) throw new Error('Could not start game')
