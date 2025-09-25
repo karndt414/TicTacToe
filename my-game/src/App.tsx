@@ -254,12 +254,14 @@ const App = () => {
 
               const game = await startGame(appData.currentRoom!.id)
               if (!game) throw new Error('Could not start game')
-              setAppData(prev => ({ ...prev, currentGame: game }))
-              setAppState('game')
 
-              // Subscribe to game updates
+              // Subscribe to game updates (if not already subscribed)
               const gameChannel = subscribeToGame(game.id, (updatedGame) => {
                 setAppData(prev => ({ ...prev, currentGame: updatedGame }))
+                // Transition to game screen for all clients when game is available
+                if (updatedGame) {
+                  setAppState(prevState => prevState !== 'game' ? 'game' : prevState)
+                }
               })
                 ; (window as any).__gameChannel?.unsubscribe?.()
                 ; (window as any).__gameChannel = gameChannel
