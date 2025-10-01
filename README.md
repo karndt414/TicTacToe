@@ -8,8 +8,7 @@ A simple, modern 5×5 board game built with **React + TypeScript**, styled with 
 
 ## Demo
 
-*(Add GIF or screenshot of the app running here)*
-
+<img width="1918" height="892" alt="image" src="https://github.com/user-attachments/assets/23ccc644-0d02-4cf3-8109-609ccaf50d2d" />
 
 Or link to a hosted demo if available.
 
