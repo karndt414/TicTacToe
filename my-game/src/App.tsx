@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import ParticleBackground from './components/ParticleBackground'
+import NeonButton from './components/NeonButton'
 import {
   createPlayer,
   createRoom,
@@ -85,43 +87,83 @@ const App = () => {
 
   if (loading && appState === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-2xl shadow-2xl">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="text-center mt-4 text-gray-600">Loading...</p>
+      <>
+        <ParticleBackground />
+        <div className="min-h-screen flex items-center justify-center relative z-10">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-2xl border-2 border-cyan-500 neon-glow animate-bounce-in">
+            <div className="loading-neon mx-auto"></div>
+            <p className="text-center mt-4 text-cyan-400 font-orbitron animate-neon-pulse">LOADING...</p>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+    <>
+      <ParticleBackground />
+      <div className="min-h-screen relative z-10">
       {/* Error Toast */}
       {error && (
-        <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+        <div className="fixed top-4 right-4 bg-red-900 text-red-100 px-6 py-3 rounded-lg shadow-lg z-50 border-2 border-red-500 neon-glow-red animate-bounce-in">
           <div className="flex items-center justify-between">
-            <span>{error}</span>
-            <button onClick={() => setError(null)} className="ml-4 text-white">×</button>
+            <span className="font-medium">{error}</span>
+            <button onClick={() => setError(null)} className="ml-4 text-red-100 hover:text-white">×</button>
           </div>
         </div>
       )}
 
       {/* Loading Overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
-          <div className="bg-white p-6 rounded-xl shadow-xl">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="text-center mt-2">Loading...</p>
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-40">
+          <div className="bg-gray-900 p-6 rounded-xl shadow-xl border-2 border-cyan-500 neon-glow">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto"></div>
+            <p className="text-center mt-2 text-cyan-400 font-orbitron">Loading...</p>
           </div>
         </div>
       )}
 
       {/* Home Screen */}
       {appState === 'home' && (
-        <HomeScreen
-          onCreateRoom={() => setAppState('create-room')}
-          onJoinRoom={() => setAppState('join-room')}
-        />
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-3xl shadow-2xl p-12 max-w-md w-full text-center border-2 border-cyan-500 neon-glow animate-bounce-in">
+            <div className="text-6xl mb-6 animate-pulse">🎯</div>
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2 font-orbitron animate-neon-pulse">TEAM BINGO</h1>
+            <p className="text-gray-300 mb-8">The ultimate team competition game!</p>
+
+            <div className="space-y-4">
+              <NeonButton
+                onClick={() => setAppState('create-room')}
+                variant="primary"
+                size="lg"
+                className="w-full transform transition-all duration-300 hover:scale-105"
+              >
+                🏗️ Create Room
+              </NeonButton>
+
+              <NeonButton
+                onClick={() => setAppState('join-room')}
+                variant="secondary"
+                size="lg"
+                className="w-full transform transition-all duration-300 hover:scale-105"
+              >
+                🚪 Join Room
+              </NeonButton>
+            </div>
+
+            <div className="mt-8 text-sm text-gray-400">
+              <p className="flex items-center justify-center gap-2">
+                <span className="text-cyan-400">✨</span> Real-time multiplayer
+              </p>
+              <p className="flex items-center justify-center gap-2">
+                <span className="text-pink-400">🎮</span> Mini-games included
+              </p>
+              <p className="flex items-center justify-center gap-2">
+                <span className="text-purple-400">👥</span> Teams of 3 players each
+              </p>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Create Room Screen */}
@@ -354,7 +396,8 @@ const App = () => {
           }}
         />
       )}
-    </div>
+      </div>
+    </>
   )
 }
 
@@ -413,28 +456,30 @@ const CreateRoomScreen = ({ onBack, onRoomCreated }: {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
-        <button
+      <div className="bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-md w-full border-2 border-cyan-500 neon-glow animate-bounce-in">
+        <NeonButton
           onClick={onBack}
-          className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+          variant="secondary"
+          size="sm"
+          className="mb-6"
         >
           ← Back
-        </button>
+        </NeonButton>
 
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🏗️</div>
-          <h2 className="text-3xl font-bold text-gray-800">Create Room</h2>
-          <p className="text-gray-600">Set up a new game room</p>
+          <div className="text-5xl mb-4 animate-pulse">🏗️</div>
+          <h2 className="text-3xl font-bold text-cyan-400 mb-2 font-orbitron animate-neon-pulse">Create Room</h2>
+          <p className="text-gray-400">Set up a new game room</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your Username</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Your Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-xl focus:border-cyan-500 focus:outline-none transition-colors text-white placeholder-gray-500"
               placeholder="Enter your username"
               required
               maxLength={20}
@@ -442,24 +487,26 @@ const CreateRoomScreen = ({ onBack, onRoomCreated }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Room Name</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Room Name</label>
             <input
               type="text"
               value={roomName}
               onChange={(e) => setRoomName(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-xl focus:border-cyan-500 focus:outline-none transition-colors text-white placeholder-gray-500"
               placeholder="Enter room name"
               required
               maxLength={30}
             />
           </div>
 
-          <button
+          <NeonButton
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+            variant="primary"
+            size="lg"
+            className="w-full transform transition-all duration-300 hover:scale-105"
           >
             Create Room 🚀
-          </button>
+          </NeonButton>
         </form>
       </div>
     </div>
@@ -483,28 +530,30 @@ const JoinRoomScreen = ({ onBack, onRoomJoined }: {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full">
-        <button
+      <div className="bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-md w-full border-2 border-purple-500 neon-glow animate-bounce-in">
+        <NeonButton
           onClick={onBack}
-          className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+          variant="secondary"
+          size="sm"
+          className="mb-6"
         >
           ← Back
-        </button>
+        </NeonButton>
 
         <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🚪</div>
-          <h2 className="text-3xl font-bold text-gray-800">Join Room</h2>
-          <p className="text-gray-600">Enter a room code to join</p>
+          <div className="text-5xl mb-4 animate-pulse">🚪</div>
+          <h2 className="text-3xl font-bold text-purple-400 mb-2 font-orbitron animate-neon-pulse">Join Room</h2>
+          <p className="text-gray-400">Enter a room code to join</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Your Username</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Your Username</label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-xl focus:border-purple-500 focus:outline-none transition-colors text-white placeholder-gray-500"
               placeholder="Enter your username"
               required
               maxLength={20}
@@ -512,24 +561,26 @@ const JoinRoomScreen = ({ onBack, onRoomJoined }: {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Room Code</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Room Code</label>
             <input
               type="text"
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-purple-500 focus:outline-none transition-colors font-mono text-center text-lg"
+              className="w-full px-4 py-3 bg-gray-800 border-2 border-gray-600 rounded-xl focus:border-purple-500 focus:outline-none transition-colors font-mono text-center text-lg text-purple-400"
               placeholder="XXXX"
               required
               maxLength={4}
             />
           </div>
 
-          <button
+          <NeonButton
             type="submit"
-            className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200"
+            variant="secondary"
+            size="lg"
+            className="w-full"
           >
             Join Room 🎯
-          </button>
+          </NeonButton>
         </form>
       </div>
     </div>
@@ -557,23 +608,25 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
     <div className="min-h-screen p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
+        <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 mb-8 border-2 border-cyan-500 neon-glow">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">🎯 {room.name}</h1>
-              <p className="text-gray-600">Room Code: <span className="font-mono text-lg font-bold">{room.code}</span></p>
-              {isHost && <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full mt-1">👑 Host</span>}
+              <h1 className="text-3xl font-bold text-cyan-400 font-orbitron">🎯 {room.name}</h1>
+              <p className="text-gray-300">Room Code: <span className="font-mono text-lg font-bold text-cyan-400 bg-gray-800 px-3 py-1 rounded">{room.code}</span></p>
+              {isHost && <span className="inline-block bg-yellow-600 text-yellow-100 text-xs px-3 py-1 rounded-full mt-2 font-bold animate-pulse">👑 HOST</span>}
             </div>
             <div className="text-right">
-              <button
+              <NeonButton
                 onClick={onLeaveRoom}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2"
+                variant="danger"
+                size="sm"
+                className="mb-2 transform transition-all duration-300 hover:scale-105"
               >
                 Leave Room
-              </button>
-              <div className="text-sm text-gray-500">
-                <p>Players: {players.length}/6</p>
-                <p>Ready: {players.filter(p => p.is_ready).length}/{players.length}</p>
+              </NeonButton>
+              <div className="text-sm text-gray-400">
+                <p>Players: <span className="text-cyan-400">{players.length}</span>/6</p>
+                <p>Ready: <span className="text-green-400">{players.filter(p => p.is_ready).length}</span>/{players.length}</p>
               </div>
             </div>
           </div>
@@ -582,132 +635,143 @@ const LobbyScreen = ({ room, players, currentPlayer, onJoinTeam, onToggleReady, 
         {/* Teams */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Red Team */}
-          <div className="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl shadow-xl p-6 text-white">
-            <h2 className="text-2xl font-bold mb-4">🔴 Red Team ({redPlayers.length}/3)</h2>
+          <div className="bg-gradient-to-br from-red-900 to-red-700 rounded-2xl shadow-2xl p-6 text-white border-2 border-red-500 neon-glow animate-slide-in">
+            <h2 className="text-2xl font-bold mb-4 font-orbitron animate-pulse">🔴 Red Team ({redPlayers.length}/3)</h2>
             <div className="space-y-3 mb-6">
               {redPlayers.map(player => (
-                <div key={player.id} className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-3">
+                <div key={player.id} className="bg-red-800 bg-opacity-50 backdrop-blur rounded-lg p-3 border border-red-600 animate-float">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">{player.username}</span>
+                    <span className="font-semibold text-red-100">{player.username}</span>
                     <div className="flex items-center space-x-2">
-                      <span>{player.is_ready ? '✅' : '⏳'}</span>
-                      {player.id === room.host_player_id && <span className="text-xs">👑</span>}
+                      <span className={player.is_ready ? 'text-green-400 text-xl' : 'text-yellow-400 text-xl'}>
+                        {player.is_ready ? '✅' : '⏳'}
+                      </span>
+                      {player.id === room.host_player_id && <span className="text-yellow-400 text-lg">👑</span>}
                     </div>
                   </div>
                 </div>
               ))}
               {Array.from({ length: Math.max(0, 3 - redPlayers.length) }, (_, i) => (
-                <div key={`empty-red-${i}`} className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200 border-2 border-dashed border-white border-opacity-30">
+                <div key={`empty-red-${i}`} className="bg-red-900 bg-opacity-30 backdrop-blur rounded-lg p-3 text-center text-red-300 border-2 border-dashed border-red-500 animate-pulse">
                   Empty slot {redPlayers.length + i + 1}/3
                 </div>
               ))}
             </div>
             {!currentPlayer.team && redPlayers.length < 3 && (
-              <button
+              <NeonButton
                 onClick={() => onJoinTeam('red')}
-                className="w-full bg-white text-red-600 font-bold py-3 rounded-lg hover:bg-gray-100 transition-colors"
+                variant="danger"
+                size="md"
+                className="w-full"
               >
                 Join Red Team
-              </button>
+              </NeonButton>
             )}
           </div>
 
           {/* Center Controls */}
-          <div className="bg-white rounded-2xl shadow-xl p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Game Control</h2>
+          <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 border-2 border-purple-500 neon-glow animate-slide-in" style={{animationDelay: '0.1s'}}>
+            <h2 className="text-2xl font-bold text-purple-400 mb-6 text-center font-orbitron">Game Control</h2>
 
             <div className="space-y-4">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-600 mb-1">You are:</p>
-                <p className="font-bold text-lg">{currentPlayer.username}</p>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                <p className="text-sm text-gray-400 mb-1">You are:</p>
+                <p className="font-bold text-lg text-cyan-400">{currentPlayer.username}</p>
                 <p className="text-sm">Team: {currentPlayer.team ? (
-                  <span className={currentPlayer.team === 'red' ? 'text-red-600' : 'text-purple-600'}>
+                  <span className={currentPlayer.team === 'red' ? 'text-red-400' : 'text-purple-400'}>
                     {currentPlayer.team.toUpperCase()}
                   </span>
-                ) : 'None'}</p>
+                ) : <span className="text-gray-500">None</span>}</p>
               </div>
 
               {currentPlayer.team && (
-                <button
+                <NeonButton
                   onClick={onToggleReady}
-                  className={`w-full py-3 rounded-lg font-bold transition-colors ${currentPlayer.is_ready
-                      ? 'bg-green-500 hover:bg-green-600 text-white'
-                      : 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                    }`}
+                  variant={currentPlayer.is_ready ? "success" : "secondary"}
+                  size="md"
+                  className="w-full transform transition-all duration-300 hover:scale-105"
                 >
                   {currentPlayer.is_ready ? '✅ Ready!' : '⏳ Mark Ready'}
-                </button>
+                </NeonButton>
               )}
 
               {canStart && (
-                <button
+                <NeonButton
                   onClick={onStartGame}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                  variant="primary"
+                  size="lg"
+                  className="w-full text-lg transform transition-all duration-300 hover:scale-105"
                 >
                   🚀 START GAME!
-                </button>
+                </NeonButton>
               )}
 
               {!canStart && canForceStart && isHost && (
                 <div className="space-y-2">
-                  <div className="text-center text-sm text-yellow-600 bg-yellow-50 rounded-lg p-2">
+                  <div className="text-center text-sm text-yellow-400 bg-yellow-900 bg-opacity-50 rounded-lg p-2 border border-yellow-600">
                     <p>⚠️ Ideal: 3 players per team, all ready</p>
                     <p>Current: {redPlayers.length} red, {purplePlayers.length} purple</p>
                   </div>
-                  <button
+                  <NeonButton
                     onClick={onStartGame}
-                    className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-3 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                    variant="danger"
+                    size="md"
+                    className="w-full transform transition-all duration-300 hover:scale-105"
                   >
                     ⚡ FORCE START (Host Only)
-                  </button>
+                  </NeonButton>
                 </div>
               )}
 
               {!canForceStart && (
-                <div className="text-center text-sm text-gray-500 bg-gray-50 rounded-lg p-3">
+                <div className="text-center text-sm text-gray-500 bg-gray-800 rounded-lg p-3 border border-gray-700">
                   <p>⏳ Need at least 1 player on each team to start</p>
-                  <p>Red: {redPlayers.length} | Purple: {purplePlayers.length}</p>
+                  <p>Red: <span className="text-red-400">{redPlayers.length}</span> | Purple: <span className="text-purple-400">{purplePlayers.length}</span></p>
                 </div>
               )}
 
-              <div className="text-center text-sm text-gray-500">
-                <p>💡 <strong>Optimal:</strong> 3v3 teams, all ready</p>
-                <p>📊 <strong>Current:</strong> {redPlayers.length} red vs {purplePlayers.length} purple</p>
+              <div className="text-center text-sm text-gray-400">
+                <p>💡 <strong className="text-cyan-400">Optimal:</strong> 3v3 teams, all ready</p>
+                <p>📊 <strong className="text-purple-400">Current:</strong> {redPlayers.length} red vs {purplePlayers.length} purple</p>
                 {isHost && !canStart && canForceStart && (
-                  <p className="text-orange-600 font-medium mt-1">🔑 You can force start as host</p>
+                  <p className="text-orange-400 font-medium mt-1 animate-pulse">🔑 You can force start as host</p>
                 )}
               </div>
             </div>
           </div>
 
           {/* Purple Team */}
-          <div className="bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl shadow-xl p-6 text-white">
-            <h2 className="text-2xl font-bold mb-4">🟣 Purple Team ({purplePlayers.length}/3)</h2>
+          <div className="bg-gradient-to-br from-purple-900 to-purple-700 rounded-2xl shadow-2xl p-6 text-white border-2 border-purple-500 neon-glow animate-slide-in" style={{animationDelay: '0.2s'}}>
+            <h2 className="text-2xl font-bold mb-4 font-orbitron animate-pulse">🟣 Purple Team ({purplePlayers.length}/3)</h2>
             <div className="space-y-3 mb-6">
               {purplePlayers.map(player => (
-                <div key={player.id} className="bg-white bg-opacity-20 backdrop-blur rounded-lg p-3">
+                <div key={player.id} className="bg-purple-800 bg-opacity-50 backdrop-blur rounded-lg p-3 border border-purple-600 animate-float">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">{player.username}</span>
+                    <span className="font-semibold text-purple-100">{player.username}</span>
                     <div className="flex items-center space-x-2">
-                      <span>{player.is_ready ? '✅' : '⏳'}</span>
-                      {player.id === room.host_player_id && <span className="text-xs">👑</span>}
+                      <span className={player.is_ready ? 'text-green-400 text-xl' : 'text-yellow-400 text-xl'}>
+                        {player.is_ready ? '✅' : '⏳'}
+                      </span>
+                      {player.id === room.host_player_id && <span className="text-yellow-400 text-lg">👑</span>}
                     </div>
                   </div>
                 </div>
               ))}
               {Array.from({ length: Math.max(0, 3 - purplePlayers.length) }, (_, i) => (
-                <div key={`empty-purple-${i}`} className="bg-white bg-opacity-10 backdrop-blur rounded-lg p-3 text-center text-gray-200 border-2 border-dashed border-white border-opacity-30">
+                <div key={`empty-purple-${i}`} className="bg-purple-900 bg-opacity-30 backdrop-blur rounded-lg p-3 text-center text-purple-300 border-2 border-dashed border-purple-500 animate-pulse">
                   Empty slot {purplePlayers.length + i + 1}/3
                 </div>
               ))}
             </div>
             {!currentPlayer.team && purplePlayers.length < 3 && (
-              <button
+              <NeonButton
                 onClick={() => onJoinTeam('purple')}
-                className="w-full bg-white text-purple-600 font-bold py-3 rounded-lg hover:bg-gray-100 transition-colors"
+                variant="secondary"
+                size="md"
+                className="w-full"
               >
                 Join Purple Team
-              </button>
+              </NeonButton>
             )}
           </div>
         </div>
@@ -730,28 +794,39 @@ const GameScreen = ({ game, players, onSquareClick, onLeaveGame }: {
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
+        <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 mb-8 border-2 border-cyan-500 neon-glow">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-800">🎯 Team Bingo Game</h1>
-            <button
+            <h1 className="text-3xl font-bold text-cyan-400 font-orbitron">🎯 Team Bingo Game</h1>
+            <NeonButton
               onClick={onLeaveGame}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+              variant="danger"
+              size="sm"
+              className="transform transition-all duration-300 hover:scale-105"
             >
               Leave Game
-            </button>
+            </NeonButton>
           </div>
 
           {game.winner_team ? (
-            <div className={`mt-4 p-4 rounded-xl ${game.winner_team === 'red' ? 'bg-red-100 text-red-800' : 'bg-purple-100 text-purple-800'}`}>
-              <h2 className="text-2xl font-bold text-center">
+            <div className={`mt-4 p-4 rounded-xl border-2 ${game.winner_team === 'red' ? 'bg-red-900 border-red-500 text-red-100' : 'bg-purple-900 border-purple-500 text-purple-100'} neon-glow animate-pulse animate-neon-glow`}>
+              <Confetti
+                className="absolute inset-0 pointer-events-none"
+                numberOfPieces={200}
+                recycle={false}
+                tweenDuration={3000}
+                initialVelocityY={-500}
+                initialVelocityX={-100}
+                gravity={0.5}
+              />
+              <h2 className="text-2xl font-bold text-center font-orbitron animate-neon-pulse">
                 🏆 {game.winner_team.toUpperCase()} TEAM WINS! 🎉
               </h2>
             </div>
           ) : (
             <div className="mt-4">
-              <div className={`p-4 rounded-xl ${game.current_turn === 'red' ? 'bg-red-100 text-red-800' : 'bg-purple-100 text-purple-800'}`}>
+              <div className={`p-4 rounded-xl border-2 ${game.current_turn === 'red' ? 'bg-red-900 border-red-500 text-red-100' : 'bg-purple-900 border-purple-500 text-purple-100'} neon-glow animate-pulse animate-neon-glow`}>
                 <p className="text-lg text-center">
-                  <span className="font-bold text-2xl">
+                  <span className="font-bold text-2xl font-orbitron animate-neon-pulse">
                     🎯 {game.current_turn.toUpperCase()} TEAM'S TURN
                   </span>
                 </p>
@@ -764,37 +839,46 @@ const GameScreen = ({ game, players, onSquareClick, onLeaveGame }: {
         </div>
 
         {/* Game Board */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 border-2 border-purple-500 neon-glow animate-neon-glow">
           <div className="grid grid-cols-5 gap-3 max-w-md mx-auto mb-8">
             {game.board_state.map((squareState, i) => (
               <button
                 key={i}
                 onClick={() => squareState === 'empty' && !game.winner_team && onSquareClick(i)}
-                className={`aspect-square border-2 text-lg font-bold rounded-lg transition-all duration-200 ${squareState === 'red' ? 'bg-red-500 text-white border-red-600 shadow-lg' :
-                    squareState === 'purple' ? 'bg-purple-500 text-white border-purple-600 shadow-lg' :
-                      'bg-gray-50 hover:bg-gray-100 border-gray-300 hover:border-gray-400 hover:shadow-md'
-                  } ${squareState === 'empty' && !game.winner_team ? 'cursor-pointer transform hover:scale-105' : 'cursor-not-allowed'}`}
+                className={`aspect-square border-2 text-lg font-bold rounded-lg transition-all duration-300 transform hover:scale-105 ${
+                  squareState === 'red'
+                    ? 'bg-red-600 text-white border-red-400 shadow-lg neon-glow-red animate-pulse animate-neon-glow'
+                    : squareState === 'purple'
+                      ? 'bg-purple-600 text-white border-purple-400 shadow-lg neon-glow-purple animate-pulse animate-neon-glow'
+                      : 'bg-gray-800 hover:bg-gray-700 border-gray-600 hover:border-cyan-400 hover:shadow-lg hover:neon-glow cursor-pointer'
+                } ${squareState === 'empty' && !game.winner_team ? 'hover:scale-105' : 'cursor-not-allowed opacity-50'}`}
                 disabled={squareState !== 'empty' || !!game.winner_team}
               >
-                {squareState === 'empty' ? i + 1 : squareState === 'red' ? '🔴' : '🟣'}
+                {squareState === 'empty' ? (
+                  <span className="text-cyan-400 font-orbitron animate-neon-pulse">{i + 1}</span>
+                ) : squareState === 'red' ? (
+                  <span className="text-2xl animate-bounce">🔴</span>
+                ) : (
+                  <span className="text-2xl animate-bounce">🟣</span>
+                )}
               </button>
             ))}
           </div>
 
           {/* Team Status */}
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-red-50 rounded-xl p-4">
-              <h3 className="text-lg font-bold text-red-800 mb-2">🔴 Red Team</h3>
+            <div className="bg-red-900 bg-opacity-50 rounded-xl p-4 border border-red-600 neon-glow-red animate-neon-glow">
+              <h3 className="text-lg font-bold text-red-400 mb-2 font-orbitron animate-neon-pulse">🔴 Red Team</h3>
               {redPlayers.map(player => (
-                <div key={player.id} className="text-sm text-red-700">
+                <div key={player.id} className="text-sm text-red-300 animate-float">
                   {player.username}
                 </div>
               ))}
             </div>
-            <div className="bg-purple-50 rounded-xl p-4">
-              <h3 className="text-lg font-bold text-purple-800 mb-2">🟣 Purple Team</h3>
+            <div className="bg-purple-900 bg-opacity-50 rounded-xl p-4 border border-purple-600 neon-glow-purple animate-neon-glow" style={{animationDelay: '0.2s'}}>
+              <h3 className="text-lg font-bold text-purple-400 mb-2 font-orbitron animate-neon-pulse">🟣 Purple Team</h3>
               {purplePlayers.map(player => (
-                <div key={player.id} className="text-sm text-purple-700">
+                <div key={player.id} className="text-sm text-purple-300 animate-float">
                   {player.username}
                 </div>
               ))}
@@ -907,101 +991,102 @@ const RockPaperScissorsGame = ({ match, redPlayer, purplePlayer, onWin }: {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+      <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-2xl w-full border-2 border-cyan-500 neon-glow">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">✂️ Rock Paper Scissors</h2>
-          <p className="text-gray-600">Square: {match.square + 1}</p>
+          <h2 className="text-3xl font-bold text-cyan-400 mb-2 font-orbitron">✂️ Rock Paper Scissors</h2>
+          <p className="text-gray-400">Square: {match.square + 1}</p>
           <p className="text-lg mt-2">
-            <span className="text-red-600 font-bold">{redPlayer?.username || 'Red Player'}</span> vs{' '}
-            <span className="text-purple-600 font-bold">{purplePlayer?.username || 'Purple Player'}</span>
+            <span className="text-red-400 font-bold">{redPlayer?.username || 'Red Player'}</span> vs{' '}
+            <span className="text-purple-400 font-bold">{purplePlayer?.username || 'Purple Player'}</span>
           </p>
         </div>
 
         {!showResult ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Red Player */}
-            <div className="bg-red-50 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-red-600 mb-4 text-center">🔴 {redPlayer?.username}</h3>
+            <div className="bg-red-900 bg-opacity-50 rounded-xl p-6 border border-red-600 neon-glow-red animate-float">
+              <h3 className="text-xl font-bold text-red-400 mb-4 text-center font-orbitron">🔴 {redPlayer?.username}</h3>
               {!redChoice ? (
                 <div className="grid grid-cols-1 gap-3">
                   {choices.map(choice => (
                     <button
                       key={choice.value}
                       onClick={() => setRedChoice(choice.value)}
-                      className="bg-white hover:bg-red-100 border-2 border-red-200 hover:border-red-400 rounded-lg p-4 transition-all duration-200 transform hover:scale-105"
+                      className="bg-red-800 hover:bg-red-700 border-2 border-red-500 hover:border-red-300 rounded-lg p-4 transition-all duration-200 transform hover:scale-105 hover:neon-glow-red"
                     >
                       <div className="text-center">
                         <div className="text-3xl mb-2">{choice.emoji}</div>
-                        <div className="font-semibold">{choice.label}</div>
+                        <div className="font-semibold text-red-200">{choice.label}</div>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="text-center bg-white rounded-lg p-6">
-                  <div className="text-6xl mb-2">{choices.find(c => c.value === redChoice)?.emoji}</div>
-                  <div className="font-bold text-lg">{choices.find(c => c.value === redChoice)?.label}</div>
+                <div className="text-center bg-red-800 rounded-lg p-6 border border-red-500">
+                  <div className="text-6xl mb-2 animate-pulse">{choices.find(c => c.value === redChoice)?.emoji}</div>
+                  <div className="font-bold text-lg text-red-200">{choices.find(c => c.value === redChoice)?.label}</div>
                 </div>
               )}
             </div>
 
             {/* Purple Player */}
-            <div className="bg-purple-50 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-purple-600 mb-4 text-center">🟣 {purplePlayer?.username}</h3>
+            <div className="bg-purple-900 bg-opacity-50 rounded-xl p-6 border border-purple-600 neon-glow-purple animate-float" style={{animationDelay: '0.1s'}}>
+              <h3 className="text-xl font-bold text-purple-400 mb-4 text-center font-orbitron">🟣 {purplePlayer?.username}</h3>
               {!purpleChoice ? (
                 <div className="grid grid-cols-1 gap-3">
                   {choices.map(choice => (
                     <button
                       key={choice.value}
                       onClick={() => setPurpleChoice(choice.value)}
-                      className="bg-white hover:bg-purple-100 border-2 border-purple-200 hover:border-purple-400 rounded-lg p-4 transition-all duration-200 transform hover:scale-105"
+                      className="bg-purple-800 hover:bg-purple-700 border-2 border-purple-500 hover:border-purple-300 rounded-lg p-4 transition-all duration-200 transform hover:scale-105 hover:neon-glow-purple"
                     >
                       <div className="text-center">
                         <div className="text-3xl mb-2">{choice.emoji}</div>
-                        <div className="font-semibold">{choice.label}</div>
+                        <div className="font-semibold text-purple-200">{choice.label}</div>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="text-center bg-white rounded-lg p-6">
-                  <div className="text-6xl mb-2">{choices.find(c => c.value === purpleChoice)?.emoji}</div>
-                  <div className="font-bold text-lg">{choices.find(c => c.value === purpleChoice)?.label}</div>
+                <div className="text-center bg-purple-800 rounded-lg p-6 border border-purple-500">
+                  <div className="text-6xl mb-2 animate-pulse">{choices.find(c => c.value === purpleChoice)?.emoji}</div>
+                  <div className="font-bold text-lg text-purple-200">{choices.find(c => c.value === purpleChoice)?.label}</div>
                 </div>
               )}
             </div>
           </div>
         ) : (
           <div className="text-center">
-            <div className="bg-gray-50 rounded-xl p-8 mb-6">
+            <div className="bg-gray-800 rounded-xl p-8 mb-6 border border-cyan-500 neon-glow">
               <div className="flex justify-center items-center gap-8 mb-4">
                 <div className="text-center">
-                  <div className="text-6xl mb-2">{choices.find(c => c.value === redChoice)?.emoji}</div>
-                  <div className="font-bold text-red-600">{redPlayer?.username}</div>
+                  <div className="text-6xl mb-2 animate-bounce">{choices.find(c => c.value === redChoice)?.emoji}</div>
+                  <div className="font-bold text-red-400">{redPlayer?.username}</div>
                 </div>
-                <div className="text-4xl">⚔️</div>
+                <div className="text-4xl text-cyan-400 animate-pulse">⚔️</div>
                 <div className="text-center">
-                  <div className="text-6xl mb-2">{choices.find(c => c.value === purpleChoice)?.emoji}</div>
-                  <div className="font-bold text-purple-600">{purplePlayer?.username}</div>
+                  <div className="text-6xl mb-2 animate-bounce">{choices.find(c => c.value === purpleChoice)?.emoji}</div>
+                  <div className="font-bold text-purple-400">{purplePlayer?.username}</div>
                 </div>
               </div>
 
               {result === 'tie' ? (
                 <div>
-                  <p className="text-2xl font-bold text-gray-600 mb-4">🤝 It's a tie!</p>
-                  <button
+                  <p className="text-2xl font-bold text-gray-400 mb-4">🤝 It's a tie!</p>
+                  <NeonButton
                     onClick={resetGame}
-                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg"
+                    variant="secondary"
+                    size="md"
                   >
                     Play Again
-                  </button>
+                  </NeonButton>
                 </div>
               ) : (
                 <div>
-                  <p className={`text-3xl font-bold mb-4 ${result === 'red' ? 'text-red-600' : 'text-purple-600'}`}>
+                  <p className={`text-3xl font-bold mb-4 ${result === 'red' ? 'text-red-400' : 'text-purple-400'} animate-pulse`}>
                     🏆 {result === 'red' ? redPlayer?.username : purplePlayer?.username} WINS!
                   </p>
-                  <p className="text-gray-600">Returning to game...</p>
+                  <p className="text-gray-400">Returning to game...</p>
                 </div>
               )}
             </div>
@@ -1102,36 +1187,37 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
     setShowResult(true)
   }
 
-  if (!question) return <div>Loading...</div>
+  if (!question) return <div className="text-cyan-400 font-orbitron">Loading...</div>
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+      <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-2xl w-full border-2 border-cyan-500 neon-glow">
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">🧮 Math Quiz</h2>
-          <p className="text-gray-600">First to answer correctly wins!</p>
+          <h2 className="text-3xl font-bold text-cyan-400 mb-2 font-orbitron animate-neon-pulse">🧮 Math Quiz</h2>
+          <p className="text-gray-400">First to answer correctly wins!</p>
           <p className="text-sm mt-1">Square: {match.square + 1}</p>
-          <div className="text-2xl font-bold text-red-500 mt-2">⏰ {timeLeft}s</div>
+          <div className="text-2xl font-bold text-red-400 mt-2 animate-pulse">⏰ {timeLeft}s</div>
         </div>
 
         <div className="text-center mb-8">
-          <div className="text-4xl font-bold text-gray-800 mb-4">{question.text} = ?</div>
+          <div className="text-4xl font-bold text-cyan-400 mb-4 font-orbitron">{question.text} = ?</div>
         </div>
 
         {!showResult ? (
           <div className="grid grid-cols-2 gap-6">
             {/* Red Player */}
-            <div className="bg-red-50 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-red-600 mb-4 text-center">🔴 {redPlayer?.username}</h3>
+            <div className="bg-red-900 bg-opacity-50 rounded-xl p-6 border border-red-600 neon-glow-red animate-float">
+              <h3 className="text-xl font-bold text-red-400 mb-4 text-center font-orbitron">🔴 {redPlayer?.username}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {question.options.map(option => (
                   <button
                     key={option}
                     onClick={() => setRedAnswer(option)}
-                    className={`p-3 rounded-lg font-bold transition-all ${redAnswer === option
-                        ? 'bg-red-600 text-white'
-                        : 'bg-white hover:bg-red-100 border-2 border-red-200'
-                      }`}
+                    className={`p-3 rounded-lg font-bold transition-all transform hover:scale-105 ${
+                      redAnswer === option
+                        ? 'bg-red-600 text-white neon-glow-red'
+                        : 'bg-red-800 hover:bg-red-700 border-2 border-red-500 hover:border-red-300'
+                    }`}
                   >
                     {option}
                   </button>
@@ -1140,17 +1226,18 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
             </div>
 
             {/* Purple Player */}
-            <div className="bg-purple-50 rounded-xl p-6">
-              <h3 className="text-xl font-bold text-purple-600 mb-4 text-center">🟣 {purplePlayer?.username}</h3>
+            <div className="bg-purple-900 bg-opacity-50 rounded-xl p-6 border border-purple-600 neon-glow-purple animate-float" style={{animationDelay: '0.1s'}}>
+              <h3 className="text-xl font-bold text-purple-400 mb-4 text-center font-orbitron">🟣 {purplePlayer?.username}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {question.options.map(option => (
                   <button
                     key={option}
                     onClick={() => setPurpleAnswer(option)}
-                    className={`p-3 rounded-lg font-bold transition-all ${purpleAnswer === option
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white hover:bg-purple-100 border-2 border-purple-200'
-                      }`}
+                    className={`p-3 rounded-lg font-bold transition-all transform hover:scale-105 ${
+                      purpleAnswer === option
+                        ? 'bg-purple-600 text-white neon-glow-purple'
+                        : 'bg-purple-800 hover:bg-purple-700 border-2 border-purple-500 hover:border-purple-300'
+                    }`}
                   >
                     {option}
                   </button>
@@ -1160,17 +1247,17 @@ const MathQuizGame = ({ match, redPlayer, purplePlayer, onWin }: {
           </div>
         ) : (
           <div className="text-center">
-            <div className="bg-gray-50 rounded-xl p-6">
-              <div className="text-3xl font-bold mb-4">Answer: {question.answer}</div>
+            <div className="bg-gray-800 rounded-xl p-6 border border-cyan-500 neon-glow">
+              <div className="text-3xl font-bold text-cyan-400 mb-4 font-orbitron">Answer: {question.answer}</div>
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className={`p-3 rounded-lg ${redAnswer === question.answer ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                <div className={`p-3 rounded-lg ${redAnswer === question.answer ? 'bg-green-900 border-green-500 text-green-400' : 'bg-red-900 border-red-500 text-red-400'}`}>
                   {redPlayer?.username}: {redAnswer ?? 'No answer'} {redAnswer === question.answer ? '✅' : '❌'}
                 </div>
-                <div className={`p-3 rounded-lg ${purpleAnswer === question.answer ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+                <div className={`p-3 rounded-lg ${purpleAnswer === question.answer ? 'bg-green-900 border-green-500 text-green-400' : 'bg-purple-900 border-purple-500 text-purple-400'}`}>
                   {purplePlayer?.username}: {purpleAnswer ?? 'No answer'} {purpleAnswer === question.answer ? '✅' : '❌'}
                 </div>
               </div>
-              <p className="text-gray-600">Returning to game...</p>
+              <p className="text-gray-400">Returning to game...</p>
             </div>
           </div>
         )}
@@ -1216,41 +1303,51 @@ const QuickTapGame = ({ match, redPlayer, purplePlayer, onWin }: {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+      <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-2xl w-full border-2 border-purple-500 neon-glow">
         <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-gray-800">⚡ Quick Tap</h2>
-          <p className="text-gray-600">Be the first to tap when it says GO!</p>
+          <h2 className="text-3xl font-bold text-purple-400 mb-2 font-orbitron animate-neon-pulse">⚡ Quick Tap</h2>
+          <p className="text-gray-400">Be the first to tap when it says GO!</p>
           <p className="text-sm mt-1">Square: {match.square + 1}</p>
         </div>
 
         {!ready ? (
           <div className="text-center">
-            <button
+            <NeonButton
               onClick={() => setReady(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg"
+              variant="primary"
+              size="md"
+              className="text-lg"
             >
               Start Countdown
-            </button>
+            </NeonButton>
           </div>
         ) : countdown !== null ? (
-          <div className="text-center text-6xl font-extrabold text-gray-700">{countdown}</div>
+          <div className="text-center text-6xl font-extrabold text-cyan-400 font-orbitron animate-pulse">{countdown}</div>
         ) : !winner ? (
           <div className="grid grid-cols-2 gap-6">
-            <div className="bg-red-50 rounded-xl p-6 text-center">
-              <div className="font-bold text-red-600 mb-3">🔴 {redPlayer?.username || 'Red'}</div>
+            <div className="bg-red-900 bg-opacity-50 rounded-xl p-6 text-center border border-red-600 neon-glow-red animate-float">
+              <div className="font-bold text-red-400 mb-3 font-orbitron">🔴 {redPlayer?.username || 'Red'}</div>
               <button
                 onClick={() => handleTap('red')}
-                className={`w-full text-3xl font-extrabold rounded-xl py-8 ${go ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                className={`w-full text-3xl font-extrabold rounded-xl py-8 transition-all transform hover:scale-105 ${
+                  go
+                    ? 'bg-red-600 hover:bg-red-700 text-white neon-glow-red cursor-pointer'
+                    : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                }`}
                 disabled={!go}
               >
                 TAP!
               </button>
             </div>
-            <div className="bg-purple-50 rounded-xl p-6 text-center">
-              <div className="font-bold text-purple-600 mb-3">🟣 {purplePlayer?.username || 'Purple'}</div>
+            <div className="bg-purple-900 bg-opacity-50 rounded-xl p-6 text-center border border-purple-600 neon-glow-purple animate-float" style={{animationDelay: '0.1s'}}>
+              <div className="font-bold text-purple-400 mb-3 font-orbitron">🟣 {purplePlayer?.username || 'Purple'}</div>
               <button
                 onClick={() => handleTap('purple')}
-                className={`w-full text-3xl font-extrabold rounded-xl py-8 ${go ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
+                className={`w-full text-3xl font-extrabold rounded-xl py-8 transition-all transform hover:scale-105 ${
+                  go
+                    ? 'bg-purple-600 hover:bg-purple-700 text-white neon-glow-purple cursor-pointer'
+                    : 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                }`}
                 disabled={!go}
               >
                 TAP!
@@ -1259,10 +1356,10 @@ const QuickTapGame = ({ match, redPlayer, purplePlayer, onWin }: {
           </div>
         ) : (
           <div className="text-center">
-            <p className={`text-3xl font-bold ${winner === 'red' ? 'text-red-600' : 'text-purple-600'}`}>
+            <p className={`text-3xl font-bold ${winner === 'red' ? 'text-red-400' : 'text-purple-400'} animate-pulse font-orbitron`}>
               🏆 {winner === 'red' ? redPlayer?.username : purplePlayer?.username} wins!
             </p>
-            <p className="text-gray-500">Returning to game...</p>
+            <p className="text-gray-400">Returning to game...</p>
           </div>
         )}
       </div>

@@ -1,18 +1,298 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* Reset default Vite styles */
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-#root {
-  min-height: 100vh;
-}
+ /* Neon Arcade Theme - Custom CSS Variables */
+ :root {
+   /* Typography */
+   --font-heading: 'Orbitron', system-ui, sans-serif;
+   --font-body: 'Inter', system-ui, sans-serif;
+   
+   /* Neon Color Palette */
+   --neon-blue: #00D4FF;
+   --neon-pink: #FF006E;
+   --neon-purple: #8B5CF6;
+   --neon-cyan: #00FFFF;
+   --neon-orange: #FF6B35;
+   
+   /* Dark Theme Colors */
+   --dark-bg: #0F0F23;
+   --card-bg: #1A1A2E;
+   --surface-bg: #16213E;
+   --text-primary: #FFFFFF;
+   --text-secondary: #B8BCC8;
+   --text-muted: #6B7280;
+   
+   /* Team Colors */
+   --team-red: #FF0040;
+   --team-purple: #B967FF;
+   --team-red-glow: #FF0040;
+   --team-purple-glow: #B967FF;
+   
+   /* Glow Effects */
+   --glow-intensity: 0 0 20px;
+   --glow-strong: 0 0 30px;
+   --glow-intense: 0 0 40px;
+   
+   /* Animation Timing */
+   --animation-fast: 0.2s;
+   --animation-normal: 0.3s;
+   --animation-slow: 0.5s;
+   --animation-slower: 0.8s;
+   
+   /* Spacing */
+   --spacing-xs: 0.25rem;
+   --spacing-sm: 0.5rem;
+   --spacing-md: 1rem;
+   --spacing-lg: 1.5rem;
+   --spacing-xl: 2rem;
+   --spacing-2xl: 3rem;
+ }
+ 
+ /* Base Styles */
+ * {
+   box-sizing: border-box;
+ }
+ 
+ body {
+   margin: 0;
+   min-width: 320px;
+   min-height: 100vh;
+   font-family: var(--font-body);
+   background: var(--dark-bg);
+   color: var(--text-primary);
+   overflow-x: hidden;
+ }
+ 
+ #root {
+   min-height: 100vh;
+   position: relative;
+ }
+ 
+ /* Typography */
+ h1, h2, h3, h4, h5, h6 {
+   font-family: var(--font-heading);
+   font-weight: 700;
+   letter-spacing: -0.025em;
+ }
+ 
+ /* Base Animations */
+ @keyframes neon-pulse {
+   0%, 100% {
+     filter: brightness(1) drop-shadow(var(--glow-intensity));
+     transform: scale(1);
+   }
+   50% {
+     filter: brightness(1.2) drop-shadow(var(--glow-intense));
+     transform: scale(1.02);
+   }
+ }
+ 
+ @keyframes float {
+   0%, 100% { transform: translateY(0px); }
+   50% { transform: translateY(-10px); }
+ }
+ 
+ @keyframes glow-pulse {
+   0%, 100% { opacity: 0.8; }
+   50% { opacity: 1; }
+ }
+ 
+ @keyframes slide-in {
+   from {
+     opacity: 0;
+     transform: translateY(20px);
+   }
+   to {
+     opacity: 1;
+     transform: translateY(0);
+   }
+ }
+ 
+ @keyframes rotate {
+   from { transform: rotate(0deg); }
+   to { transform: rotate(360deg); }
+ }
+ 
+ @keyframes bounce-in {
+   0% {
+     opacity: 0;
+     transform: scale(0.3);
+   }
+   50% {
+     opacity: 1;
+     transform: scale(1.05);
+   }
+   70% { transform: scale(0.9); }
+   100% {
+     opacity: 1;
+     transform: scale(1);
+   }
+ }
+ 
+ @keyframes ripple {
+   0% {
+     transform: scale(0);
+     opacity: 1;
+   }
+   100% {
+     transform: scale(4);
+     opacity: 0;
+   }
+ }
+ 
+ /* Utility Classes */
+ .neon-glow {
+   filter: drop-shadow(var(--glow-intensity));
+ }
+ 
+ .neon-glow-strong {
+   filter: drop-shadow(var(--glow-strong));
+ }
+ 
+ .neon-glow-intense {
+   filter: drop-shadow(var(--glow-intense));
+ }
+ 
+ .animate-neon-pulse {
+   animation: neon-pulse 2s ease-in-out infinite;
+ }
+ 
+ .animate-float {
+   animation: float 3s ease-in-out infinite;
+ }
+ 
+ .animate-glow-pulse {
+   animation: glow-pulse 1.5s ease-in-out infinite;
+ }
+ 
+ .animate-slide-in {
+   animation: slide-in 0.5s ease-out forwards;
+ }
+ 
+ .animate-bounce-in {
+   animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+ }
+ 
+ /* Background Grid Pattern */
+ .bg-grid {
+   background-image:
+     linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+   background-size: 50px 50px;
+ }
+ 
+ /* Button Base Styles */
+ .btn-base {
+   position: relative;
+   overflow: hidden;
+   transition: all var(--animation-normal) cubic-bezier(0.4, 0, 0.2, 1);
+   border: 2px solid transparent;
+ }
+ 
+ .btn-base::before {
+   content: '';
+   position: absolute;
+   top: 0;
+   left: -100%;
+   width: 100%;
+   height: 100%;
+   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+   transition: left 0.5s;
+ }
+ 
+ .btn-base:hover::before {
+   left: 100%;
+ }
+ 
+ /* Ripple Effect */
+ .ripple {
+   position: absolute;
+   border-radius: 50%;
+   background: rgba(255, 255, 255, 0.6);
+   transform: scale(0);
+   animation: ripple 0.6s linear;
+ }
+ 
+ /* Loading Animation */
+ .loading-neon {
+   width: 40px;
+   height: 40px;
+   border: 3px solid transparent;
+   border-top-color: var(--neon-blue);
+   border-radius: 50%;
+   animation: rotate 1s linear infinite;
+   will-change: transform;
+ }
+ 
+ .loading-neon::after {
+   content: '';
+   position: absolute;
+   top: -3px;
+   left: -3px;
+   right: -3px;
+   bottom: -3px;
+   border: 3px solid transparent;
+   border-bottom-color: var(--neon-pink);
+   border-radius: 50%;
+   animation: rotate 1.5s linear infinite reverse;
+   will-change: transform;
+ }
+ 
+ /* Performance Optimizations */
+ * {
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+ }
+ 
+ /* Reduce paint complexity */
+ .animate-neon-pulse,
+ .animate-float,
+ .animate-slide-in,
+ .animate-bounce-in,
+ .animate-neon-glow {
+   contain: layout style;
+ }
+ 
+ /* Hardware acceleration for transforms */
+ .transform {
+   transform: translateZ(0);
+   backface-visibility: hidden;
+   perspective: 1000px;
+   will-change: transform;
+ }
+ 
+ /* Optimize canvas rendering */
+ canvas {
+   will-change: transform;
+   image-rendering: -moz-crisp-edges;
+   image-rendering: pixelated;
+   image-rendering: crisp-edges;
+ }
+ 
+ /* Reduce layout thrashing */
+ @media (prefers-reduced-motion: reduce) {
+   *,
+   *::before,
+   *::after {
+     animation-duration: 0.01ms !important;
+     animation-iteration-count: 1 !important;
+     transition-duration: 0.01ms !important;
+   }
+ }
+ 
+ /* Optimize button interactions */
+ .btn-base {
+   will-change: transform, box-shadow;
+ }
+ 
+ .ripple {
+   will-change: transform, opacity;
+ }
+ 
+ /* Optimize particle system */
+ #particle-canvas {
+   will-change: contents;
+ }
